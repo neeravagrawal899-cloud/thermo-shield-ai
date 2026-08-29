@@ -1,0 +1,18 @@
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+async function request(path, options={}){ const r=await fetch(`${API}${path}`,{headers:{'Content-Type':'application/json',...(options.headers||{})},...options}); if(!r.ok){let d={}; try{d=await r.json()}catch{}; throw new Error(d.detail||`HTTP ${r.status}`)} return r.json() }
+export const getHealth=()=>request('/health')
+export const getSummary=()=>request('/summary')
+export const getHotspots=(params={})=>request('/hotspots?'+new URLSearchParams(params))
+export const getFacilities=()=>request('/facilities')
+export const getAlerts=()=>request('/alerts')
+export const getRuns=()=>request('/ingestion-runs')
+export const getQuality=()=>request('/data-quality')
+export const getFeatureImportance=()=>request('/model/feature-importance')
+export const getHistory=(id)=>request(`/hotspots/${encodeURIComponent(id)}/history`)
+export const predict=(payload)=>request('/predict',{method:'POST',body:JSON.stringify(payload)})
+export const createAlert=(payload)=>request('/alerts',{method:'POST',body:JSON.stringify(payload)})
+export const updateAlert=(id,status)=>request(`/alerts/${id}`,{method:'PATCH',body:JSON.stringify({status})})
+export const ingestFirms=(payload={})=>request('/ingest/firms',{method:'POST',body:JSON.stringify(payload)})
+export const osmContext=(payload)=>request('/context/osm',{method:'POST',body:JSON.stringify(payload)})
+export const satelliteContext=(lat,lon)=>request(`/context/satellite?latitude=${lat}&longitude=${lon}`)
+export {API}
